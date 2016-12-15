@@ -149,6 +149,10 @@
 					opts.loop = !properties.loop && callOptions.loop;
 					opts._cacheValues = callOptions._cacheValues || true;
 
+					if (typeof callOptions.transformOrder !== "undefined") {
+						opts.transformOrder = callOptions.transformOrder;
+					}
+					
 					/* Special processing for the first effect call. */
 					if (callIndex === 0) {
 						/* If a delay was passed into the redirect, combine it with the first call's delay. */
