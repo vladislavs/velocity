@@ -2329,10 +2329,12 @@
 							perspective;
 
 					/* Transform properties are stored as members of the transformCache object. Concatenate all the members into a string. */
-					
-					orderedTransformCache = transformCache.map(function(value, index) {
-						return { name: index, value: value };
-					});
+				
+					var orderedTransformCache = [];
+
+					for (var index in transformCache) {
+						orderedTransformCache.push({ name: index, value: transformCache[index] });
+					}
 
 					orderedTransformCache.sort(function(a, b) {
 						var indexA = transformOrder.indexOf(a.name),
@@ -2347,30 +2349,30 @@
 						return 0;
 					});
  
-                 $.each(orderedTransformCache, function(transformIndex, transformOb) {
-                     transformValue = transformOb.value;
-                     transformName = transformOb.name;
+					 $.each(orderedTransformCache, function(transformIndex, transformOb) {
+						 transformValue = transformOb.value;
+						 transformName = transformOb.name;
 
-						/* Transform's perspective subproperty must be set first in order to take effect. Store it temporarily. */
-						if (transformName === "transformPerspective") {
-							perspective = transformValue;
-							return true;
+							/* Transform's perspective subproperty must be set first in order to take effect. Store it temporarily. */
+							if (transformName === "transformPerspective") {
+								perspective = transformValue;
+								return true;
+							}
+
+							/* IE9 only supports one rotation type, rotateZ, which it refers to as "rotate". */
+							if (IE === 9 && transformName === "rotateZ") {
+								transformName = "rotate";
+							}
+
+							transformString += transformName + transformValue + " ";
+						});
+
+						/* If present, set the perspective subproperty first. */
+						if (perspective) {
+							transformString = "perspective" + perspective + " " + transformString;
 						}
 
-						/* IE9 only supports one rotation type, rotateZ, which it refers to as "rotate". */
-						if (IE === 9 && transformName === "rotateZ") {
-							transformName = "rotate";
-						}
-
-						transformString += transformName + transformValue + " ";
-					});
-
-					/* If present, set the perspective subproperty first. */
-					if (perspective) {
-						transformString = "perspective" + perspective + " " + transformString;
 					}
-					
-				}
 
 				CSS.setPropertyValue(element, "transform", transformString);
 			}
