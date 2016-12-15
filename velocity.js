@@ -20,6 +20,12 @@
 	if (window.jQuery) {
 		return;
 	}
+	
+	/* Array map and filter support for lt IE9 */
+	(function(fn){
+		if (!fn.map) fn.map=function(f){var r=[];for(var i=0;i<this.length;i++)r.push(f(this[i]));return r}
+		if (!fn.filter) fn.filter=function(f){var r=[];for(var i=0;i<this.length;i++)if(f(this[i]))r.push(this[i]);return r}
+	})(Array.prototype);
 
 	/* jQuery base. */
 	var $ = function(selector, context) {
@@ -2324,22 +2330,22 @@
 
 					/* Transform properties are stored as members of the transformCache object. Concatenate all the members into a string. */
 					
-					orderedTransformCache = $.map(transformCache, function(value, index) {
-	                     return { name: index, value: value };
-	                 });
-	 
-	                 orderedTransformCache.sort(function(a, b) {
-	                     var indexA = transformOrder.indexOf(a.name),
-	                         indexB = transformOrder.indexOf(b.name);
-	 
-	                     if (indexA > indexB) {
-	                         return 1;
-	                     } else if (indexA < indexB) {
-	                         return - 1;
-	                     }
-	 
-	                     return 0;
-	                 });
+					orderedTransformCache = transformCache.map(function(value, index) {
+						return { name: index, value: value };
+					});
+
+					orderedTransformCache.sort(function(a, b) {
+						var indexA = transformOrder.indexOf(a.name),
+							indexB = transformOrder.indexOf(b.name);
+
+						if (indexA > indexB) {
+							return 1;
+						} else if (indexA < indexB) {
+							return - 1;
+						}
+
+						return 0;
+					});
  
                  $.each(orderedTransformCache, function(transformIndex, transformOb) {
                      transformValue = transformOb.value;
